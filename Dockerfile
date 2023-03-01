@@ -8,9 +8,15 @@ COPY package*.json ./
 
 RUN npm install
 
+
 # Bundle app source
 COPY . .
 
+RUN npm run build
+
+RUN ls -la
+
 EXPOSE 8080
 
-CMD [ "node", "server.js" ]
+
+CMD [ "node","./dist/index.js" ]

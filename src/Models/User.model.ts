@@ -5,7 +5,7 @@ import Todo from "./Todos.model";
 
 const User = sequlize.define('User', {
   id : {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
   },
@@ -25,6 +25,11 @@ const User = sequlize.define('User', {
 });
 
 User.hasMany(Todo, {
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
+});
+
+Todo.belongsTo(User, {
   foreignKey: 'userId',
   onDelete: 'CASCADE',
 });

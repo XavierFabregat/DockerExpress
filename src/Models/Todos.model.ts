@@ -1,10 +1,9 @@
 import sequlize from ".";
 import { DataTypes } from "sequelize";
-import User from "./User.model";
 
 const Todo = sequlize.define('Todo', {
   id : {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
   },
@@ -22,14 +21,9 @@ const Todo = sequlize.define('Todo', {
     defaultValue: false,
   },
   userId: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     allowNull: false,
   }
-});
-
-Todo.belongsTo(User, {
-  foreignKey: 'userId',
-  onDelete: 'CASCADE',
 });
 
 export default Todo;

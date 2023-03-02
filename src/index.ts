@@ -3,15 +3,19 @@
 import Express from "express";
 import sequlize from "./Models";
 
+import router from "./Routers";
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
 const app = Express();
+app.use(Express.json());
 
 app.get('/', (req, res) => {
   res.send('Hello world');
 });
+
+app.use(router)
 
 console.log(`Hello from Node.js ${process.version}!`);
 console.log('Press Ctrl+C to quit.');

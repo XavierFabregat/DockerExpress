@@ -1,19 +1,24 @@
 import { Sequelize } from 'sequelize';
-import * as dotenv from "dotenv";
 import config from '../config';
-dotenv.config();
+
+let sequelize!: Sequelize;
+
+console.log(process.env.NODE_ENV)
+
+if (process.env.NODE_ENV !== 'production') {
+  sequelize = new Sequelize(
+    config.docker.db_name,
+    config.docker.db_username,
+    config.docker.db_password,
+    {
+      host: 'localhost',
+      dialect: 'postgres'
+    }
+  );
+} else {
+  sequelize = new Sequelize(config.docker.connectionString)
+}
 
 
 
-const sequlize = new Sequelize(
-  config.development.db_name,
-  config.development.db_username,
-  config.development.db_password, 
-  {
-    host: 'localhost',
-    dialect: 'postgres',
-  }
-);
-
-
-export default sequlize;
+export default sequelize;

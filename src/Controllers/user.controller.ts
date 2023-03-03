@@ -9,7 +9,7 @@ class UserController {
   static async getUsers(req: Request, res: Response) {
     try {
       const users = await User.findAll({ 
-        include: Todo
+        include: [{model: Todo, as: "todos"}]
       });
       if (users.length === 0) {
         throw new Error("No users found");
@@ -54,8 +54,11 @@ class UserController {
         id,
         username,
         password: hashedPassword,
-      }).then((user) => {
-        return user;
+      }).then(async () => {
+        const newUser = await User.findByPk(id, {
+          include: [{model: Todo, as: "todos"}]
+        });
+        return newUser;
       }).catch((error) => {
         throw new Error(`Error creating the user : ${error}`);
       });
@@ -83,7 +86,7 @@ class UserController {
         where: {
           id,
         },
-        include: Todo,
+        include: [{model: Todo, as: "todos"}],
       }).then((user) => {
         return user;
       }).catch((error) => {

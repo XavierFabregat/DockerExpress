@@ -33,12 +33,14 @@ const Todo = sequlize.define('Todo', {
 
 Todo.belongsTo(User, { 
   foreignKey: 'userId',
+  as: 'todos',
   onDelete: 'CASCADE',
 });
 
 User.hasMany(Todo, {
   foreignKey: 'userId',
   onDelete: 'CASCADE',
+  as: 'todos',
 });
 
 

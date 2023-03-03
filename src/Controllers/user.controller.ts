@@ -3,11 +3,14 @@ import bcrypt from "bcrypt";
 import User from "../Models/User.model";
 import { CustomResponse } from "../Lib/Response";
 import { Request, Response } from "express";
+import Todo from "../Models/Todos.model";
 
 class UserController {
   static async getUsers(req: Request, res: Response) {
     try {
-      const users = await User.findAll();
+      const users = await User.findAll({ 
+        include: Todo
+      });
       if (users.length === 0) {
         throw new Error("No users found");
       }

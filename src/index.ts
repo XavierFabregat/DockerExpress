@@ -25,7 +25,7 @@ console.log('Press Ctrl+C to quit.');
   try {
     await sequlize.authenticate();
     console.log('Connection has been established successfully.');
-    await sequlize.sync();
+    await sequlize.sync({ force: true });
     console.log("All models were synchronized successfully.");
     app.listen(PORT, HOST, () => {
       console.log(`Running on http://${HOST}:${PORT}`);

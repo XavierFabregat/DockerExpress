@@ -75,6 +75,43 @@ class UserController {
       }
     }
   }
+
+  static async getUserById(req: Request, res: Response) {
+    try {
+      const { id } = req.params as { id: string };
+      const user = await User.findOne({
+        where: {
+          id,
+        },
+        include: Todo,
+      }).then((user) => {
+        return user;
+      }).catch((error) => {
+        throw new Error(`Error finding the user : ${error}`);
+      });
+
+      console.log(user);
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      res.status(200).json(CustomResponse.success(user));
+    } catch (error) {
+      console.log("🚀 ~ file: user.controller.ts:99 ~ UserController ~ getOneUser ~ error:", error)
+      if (error instanceof Error) {
+        if (error.message === "User not found") {
+          res
+            .status(404)
+            .json(CustomResponse.error(error, 404));
+        } else {
+          res
+            .status(500)
+            .json(CustomResponse.error(error));
+        }
+      }
+    }
+  }
 };
 
 export default UserController;

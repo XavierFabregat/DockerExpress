@@ -5,15 +5,11 @@ import sequlize from "./Models";
 
 import router from "./Routers";
 
-const PORT = 8080;
-const HOST = '0.0.0.0';
+const PORT = Number(process.env.PORT) || 8080;
+const HOST = process.env.HOST || 'localhost';
 
 const app = Express();
 app.use(Express.json());
-
-app.get('/', (req, res) => {
-  res.send('Hello world');
-});
 
 app.use(router)
 

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server For Todo App</title>
+</head>
+<body>
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      font-family: sans-serif;
+    }
+    .title {
+      text-align: center;
+      color: #333;
+      font-size: 2.5rem;
+      font-weight: 400;
+      margin: 0;
+      padding: 0;
+    }
+    .subtitle {
+      text-align: center;
+      color: #333;
+      font-size: 0.8rem;
+      font-weight: 400;
+      margin: 0;
+      padding: 0;
+    }
+
+    li > code {
+      font-size: 1.2rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.2rem;
+    }
+   .http-method {
+      font-size: 1.2rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.2rem;
+      background-color: rgb(95, 87, 87);
+      color: #fff;
+   }
+
+   form {
+      display: flex;
+      flex-direction: column;
+      width: 30%;
+      margin-top: 5%;
+      margin-left: 5%;
+   }
+
+  label {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      margin-top: 1rem;
+   }
+
+   select {
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    border-radius: 0.2rem;
+    border: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+   }
+
+   option {
+    font-size: 1.2rem;
+   }
+
+   input {
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    border-radius: 0.2rem;
+    border: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+   }
+
+   .submit-button {
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    border-radius: 0.2rem;
+    border: 1px solid #ccc;
+    background-color: rgb(95, 87, 87);
+    color: #fff;
+    cursor: pointer;
+   }
+
+  .submit-button:hover {
+    background-color: rgb(95, 87, 87, 0.8);
+  }
+
+  .user-id-input {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  </style>
+  <h1 class="title">Server For Todo App</h1>
+  <p class="subtitle">(Server is running on port {{PORT}})</p>
+  <section class="introduction">
+    <p>This is a server for the Todo App. It is built with Express and Node.js. It is connected to a PostgreSQL database.</p>
+    <p>The server is running on port {{PORT}}.</p>
+  </section>
+  <sectioin class="features">
+    <p>So far the routes implemented are:</p>
+    <ul>
+      <li><span class="http-method">GET:</span><code>/api/users</code></li>
+      <li><span class="http-method">POST:</span><code>/api/users</code></li>
+      <li><span class="http-method">GET:</span><code>/api/users/:id</code></li>
+      <li><span class="http-method">GET:</span><code>/api/todos</code></li>
+      <li><span class="http-method">POST:</span><code>/api/todos</code></li>
+    </ul>
+  </sectioin>
+  <p>You can test them by appending the route on the url in the browser (will only work for GET requests), or with the widget below.</p>
+  <form class="endpoint-test">
+    <label for="http-method">HTTP Method:</label>
+    <select name="http-method" id="http-method" required>
+      <option value="" disabled selected>Choose a method</option>
+      <option value="GET">GET</option>
+      <option value="POST">POST</option>
+    </select>
+    <label for="endpoint">Endpoint:</label>
+    <select name="endpoint" id="endpoint">
+      <option value="" disabled selected>Choose an endpoint</option>
+      <option value="/api/users">/api/users</option>
+      <option value="/api/users/:id">/api/users/:id</option>
+      <option value="/api/todos">/api/todos</option>
+    </select>
+    <div class="user-id-input hidden">
+      <label for="User Id">User Id: </label>
+      <input type="text" name="id" id="id">
+    </div>
+    <button type="submit" class="submit-button">Submit</button>
+  </form>
+  <script>
+    const form = document.querySelector('.endpoint-test');
+    const httpMethod = document.querySelector('#http-method');
+    const endpoint = document.querySelector('#endpoint');
+    const id = document.querySelector('#id');
+    const submitButton = document.querySelector('.submit-button');
+
+    form.addEventListener('change', (e) => {
+      console.log(endpoint.value === '/api/users/:id' && httpMethod.value === 'GET');
+      if (endpoint.value === '/api/users/:id' && httpMethod.value === 'GET') {
+        document.querySelector('.user-id-input').classList.remove('hidden');
+        id.setAttribute('required', true);
+      } else {
+        document.querySelector('.user-id-input').classList.add('hidden');
+        id.removeAttribute('required');
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const url = `http://localhost:{{PORT}}${endpoint.value}`;
+      const method = httpMethod.value;
+      const idValue = id.value;
+      if (method === 'GET') {
+        if (endpoint.value === '/api/users/:id') {
+          fetch(`${url}/${idValue}`)
+          .then(res => res.json())
+          .then(data => console.log(data))
+          .catch(err => console.log(err));
+        } else {
+          fetch(url)
+          .then(res => res.json())
+          .then(data => console.log(data))
+          .catch(err => console.log(err));
+        }
+      } else if (method === 'POST') {
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: 'John Doe',
+            password: 'shhhhh'
+          })
+        })
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.log(err));
+      }
+    });
+  </script>
+</body>
+</html>

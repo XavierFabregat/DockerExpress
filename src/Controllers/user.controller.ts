@@ -33,6 +33,11 @@ class UserController {
   static async postUser (req: Request, res: Response) {
     try {
       const { username, password } = req.body as { username: string, password: string };
+
+      if (!username || !password) {
+        throw new Error("Username and password are required");
+      };
+
       const id = uuidv4();
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -70,6 +75,10 @@ class UserController {
           res
             .status(409)
             .json(CustomResponse.error(error, 409, "User already exists"));
+        } else if (error.message === "Username and password are required") {
+          res
+            .status(400)
+            .json(CustomResponse.error(error, 400, "Username and password are required"));
         } else {
           res
             .status(500)

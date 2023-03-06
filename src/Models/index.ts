@@ -3,8 +3,6 @@ import config from '../config';
 
 let sequelize!: Sequelize;
 
-console.log(process.env.NODE_ENV)
-
 if (process.env.NODE_ENV !== 'production') {
   sequelize = new Sequelize(
     config.docker.db_name,

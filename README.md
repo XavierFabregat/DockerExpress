@@ -45,6 +45,12 @@ npm run dev # Runs the server in development mode with nodemon
 npm run start # Runs the server in production mode with node
 ```
 
+To populate the database with some data you can run the following command.
+
+```bash
+npm run seed
+```
+
 The app is build in TypeScript so the folder that contains the source code is in the src folder. The compiled code is in the dist folder. The server is run from the dist folder. If you want to edit the code you will need to run the following command to compile the code.
 
 ```bash

@@ -8,7 +8,8 @@
     "build": "tsc",
     "dev": "NODE_ENV=development npx nodemon dist/index.js",
     "start": "NODE_ENV=production node dist/index.js",
-    "build:dev": "tsc -w"
+    "build:dev": "tsc -w",
+    "seed": "NODE_ENV=development node dist/Migrations/index.js"
   },
   "author": "Xavier Fabregat",
   "license": "MIT",

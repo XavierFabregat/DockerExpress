@@ -4,7 +4,7 @@ import User from "./User.model";
 
 const Todo = sequlize.define('Todo', {
   id : {
-    type: DataTypes.STRING,
+    type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
   },

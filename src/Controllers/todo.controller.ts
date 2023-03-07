@@ -8,7 +8,7 @@ class TodoController {
   static async getTodos(req: Request, res: Response): Promise<void> {
     try {
       const todos = await Todo.findAll({
-        include: User,
+        include: [{model: User, as: "user"}],
       }).then((todos) => {
         return todos;
       }).catch((error) => {
@@ -49,8 +49,10 @@ class TodoController {
         title,
         description,
         userId,
-      }).then((todo) => {
-        return todo;
+      }).then(async (todo) => {
+        return await Todo.findByPk(id,{
+          include: [{model: User, as: "user"}],
+        });
       }).catch((error) => {
         throw new Error(`Error creating the todo : ${error}`);
       });

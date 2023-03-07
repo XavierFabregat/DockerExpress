@@ -33,7 +33,7 @@ const Todo = sequlize.define('Todo', {
 
 Todo.belongsTo(User, { 
   foreignKey: 'userId',
-  as: 'todos',
+  as: 'user',
   onDelete: 'CASCADE',
 });
 

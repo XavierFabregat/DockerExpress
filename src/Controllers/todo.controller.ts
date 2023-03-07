@@ -42,6 +42,20 @@ class TodoController {
         userId 
       } = req.body as { title: string, description: string, userId: string };
 
+      if (!title || !description || !userId) {
+        throw new Error("Title, description and userId are required");
+      };
+
+      const doesUserExist = await User.findByPk(userId).then((user) => {
+        return user;
+      }).catch((error) => {
+        throw new Error(`Error finding the user : ${error}`);
+      });
+
+      if (!doesUserExist) {
+        throw new Error("User does not exist");
+      }
+
       const id = uuidv4();
 
       const todo = await Todo.create({
@@ -63,6 +77,12 @@ class TodoController {
       if (error instanceof Error) {
         if (error.message.includes("Error creating the todo")) {
           res.status(409).json(CustomResponse.error(error, 500, error.message));
+        } else if (error.message === "User does not exist") {
+          res.status(404).json(CustomResponse.error(error, 404, error.message));
+        } else if (error.message === "Title, description and userId are required") {
+          res.status(400).json(CustomResponse.error(error, 400, error.message));
+        } else if (error.message.includes("Error finding the user")) {
+          res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
           res.status(500).json(CustomResponse.error(error));
         }

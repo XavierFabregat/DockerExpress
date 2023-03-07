@@ -191,7 +191,16 @@
   }
 
   .copied {
-    background: greenyellow;
+    position: sticky;
+    top: 3%;
+    left: 90%;
+    padding: 10px;
+  	font-size: 18px;
+  	border: none;
+  	outline: none;
+  	border-radius: 10px;
+  	cursor: pointer;
+    background: #4BB543;
     color: #fff;
   }
 
@@ -250,6 +259,14 @@
           <label for="password">Password: </label>
           <input type="text" name="password" id="password">
         </div>
+        <div class="post-body-todo hidden">
+          <label for="title">Title: </label>
+          <input type="text" name="title" id="title">
+          <label for="description">Description: </label>
+          <input type="text" name="description" id="description">
+          <label for="user-id">User Id: </label>
+          <input type="text" name="user-id" id="user-id">
+        </div>
         <button type="submit" class="submit-button">Submit</button>
       </form>
     </section>
@@ -276,16 +293,40 @@
     const submitButton = document.querySelector('.submit-button');
     const responseBox = document.querySelector('#response-box');
     const copyButton = document.querySelector('.copy-text-button');
+    const title = document.querySelector('#title');
+    const description = document.querySelector('#description');
+    const userId = document.querySelector('#user-id');
+
+    form.addEventListener('change', (e) => {
+      if (httpMethod.value === "POST") {
+        Array.from(endpoint.options).forEach((option, index)=> {
+          if (option.value === '/api/users/:id') {
+            endpoint.remove(index);
+          }
+        })
+      } else if (httpMethod.value === "GET") {
+        let add = true;
+        for (let i = 0; i < endpoint.options.length; i++) {
+          if (endpoint.options[i].value === '/api/users/:id') {
+            add = false;
+            break;
+          }
+        }
+        if (add) endpoint.add(new Option('/api/users/:id', '/api/users/:id'), null);
+      }
+    })
 
     form.addEventListener('change', (e) => {
       if (endpoint.value === '/api/users' && httpMethod.value === 'POST') {
         document.querySelector('.post-body-input').classList.remove('hidden');
         username.setAttribute('required', true);
         password.setAttribute('required', true);
+        userId.setAttribute('required', true);
       } else {
         document.querySelector('.post-body-input').classList.add('hidden');
         username.removeAttribute('required');
         password.removeAttribute('required');
+        userId.removeAttribute('required');
       }
     });
 
@@ -299,6 +340,18 @@
       }
     });
 
+    form.addEventListener('change', (e) => {
+      if (endpoint.value === '/api/todos' && httpMethod.value === 'POST') {
+        document.querySelector('.post-body-todo').classList.remove('hidden');
+        title.setAttribute('required', true);
+        description.setAttribute('required', true);
+      } else {
+        document.querySelector('.post-body-todo').classList.add('hidden');
+        title.removeAttribute('required');
+        description.removeAttribute('required');
+      }
+    });
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const url = `http://localhost:{{PORT}}${endpoint.value}`;
@@ -306,7 +359,8 @@
       const idValue = id.value;
       if (method === 'GET') {
         if (endpoint.value === '/api/users/:id') {
-          fetch(`${url}/${idValue}`)
+          console.log(`${url.slice(0,url.length-3)}${idValue}`)
+          fetch(`${url.slice(0,url.length-3)}${idValue}`)
           .then(res => res.json())
           .then(data => {
             responseBox.textContent = JSON.stringify(data, null, 2);
@@ -323,22 +377,42 @@
           .catch(err => console.log(err));
         }
       } else if (method === 'POST') {
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            username: username.value,
-            password: password.value
+        if (endpoint.value === '/api/user') {
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: username.value,
+              password: password.value
+            })
           })
-        })
-        .then(res => res.json())
-        .then(data => {
-          responseBox.textContent = JSON.stringify(data, null, 2);
-          copyButton.removeAttribute('disabled');
-         })
-        .catch(err => console.log(err));
+          .then(res => res.json())
+          .then(data => {
+            responseBox.textContent = JSON.stringify(data, null, 2);
+            copyButton.removeAttribute('disabled');
+           })
+          .catch(err => console.log(err));
+        } else if (endpoint.value === '/api/todos') {
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title: title.value,
+              description: description.value,
+              userId: userId.value
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            responseBox.textContent = JSON.stringify(data, null, 2);
+            copyButton.removeAttribute('disabled');
+           })
+          .catch(err => console.log(err));
+        }
       }
     });
 
@@ -351,9 +425,11 @@
       document.execCommand('copy');
       document.body.removeChild(el);
       copyButton.classList.add('copied');
+      copyButton.classList.remove('copy-text-button');
       copyButton.innerHTML = '<i class="fa fa-check"></i>';
       setTimeout(() => {
         copyButton.classList.remove('copied');
+        copyButton.classList.add('copy-text-button');
         copyButton.innerHTML = '<i class="fa fa-clone"></i>';
       }, 2000);
     });

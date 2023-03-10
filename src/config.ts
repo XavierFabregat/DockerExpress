@@ -6,6 +6,7 @@ const config = {
     db_username: process.env.DEV_POSTGRES_USER!,
     db_password: process.env.DEV_POSTGRES_PASSWORD!,
     db_name: process.env.DEV_POSTGRES_DB!,
+    connectionString: process.env.DEV_DATABASE_URL!,
   },
   test: {},
   docker: {

@@ -1,27 +1,16 @@
 import { Sequelize } from 'sequelize';
 import config from '../config';
 
-let sequelize!: Sequelize;
 
-if (process.env.NODE_ENV !== 'production') {
-  sequelize = new Sequelize(
-    config.docker.db_name,
-    config.docker.db_username,
-    config.docker.db_password,
-    {
-      host: 'localhost',
-      dialect: 'postgres',
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
-        }
+const sequelize = new Sequelize(process.env.DATABASE_URL || config.development.connectionString ,{
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
       }
     }
-  );
-} else {
-  sequelize = new Sequelize(config.docker.connectionString)
-}
+  }
+);
 
 
 

@@ -99,7 +99,7 @@ class TodoController {
     }
   }
 
-  static async getTodo (req: Request, res: Response): Promise<void> {
+  static async getTodoById (req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params as { id: string };
 
@@ -123,6 +123,157 @@ class TodoController {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else if (error.message === "Todo does not exist") {
           res.status(404).json(CustomResponse.error(error, 404, error.message));
+        } else {
+          res.status(500).json(CustomResponse.error(error));
+        }
+      }
+    }
+  }
+
+  static async updateTodo (req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params as { id: string };
+      const { title, description, completed } = req.body as { title: string, description: string, completed: boolean };
+
+      const todo = await Todo.findByPk(id).then((todo) => {
+        return todo;
+      }).catch((error) => {
+        throw new Error(`Error finding the todo : ${error}`);
+      });
+
+      if (!todo) {
+        throw new Error("Todo does not exist");
+      }
+
+      const todoUpdated = await Todo.update({
+        title,
+        description,
+        completed: completed || false,
+      }, {
+        where: {
+          id,
+        },
+      }).then(async (todo) => {
+
+        const todoUpdated = await Todo.findByPk(id, {
+          include: [{model: User, as: "user"}],
+        });
+
+        if (!todoUpdated) {
+          throw new Error("Error updating the todo");
+        }
+        return todoUpdated;
+
+      }).catch((error) => {
+        throw new Error(`Error updating the todo : ${error}`);
+      });
+
+      if (!todoUpdated) {
+        throw new Error("Error updating the todo");
+      }
+
+      res.status(200).json(CustomResponse.success(safeTodo(todoUpdated), "Todo updated"));
+    } catch (error) {
+      console.log("🚀 ~ file: todo.controller.ts:161 ~ TodoController ~ updateTodo ~ error:", error)
+      if (error instanceof Error) {
+        if (error.message.includes("Error updating the todo")) {
+          res.status(409).json(CustomResponse.error(error, 500, error.message));
+        } else if (error.message.includes("Error finding the todo")) {
+          res.status(404).json(CustomResponse.error(error, 500, error.message));
+        } else if (error.message === "Todo does not exist") {
+          res.status(404).json(CustomResponse.error(error, 404, error.message));
+        } else {
+          res.status(500).json(CustomResponse.error(error));
+        }
+      }
+    }
+  }
+
+  static async deleteTodo (req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params as { id: string };
+
+      const todo = await Todo.findByPk(id).then((todo) => {
+        return todo;
+      }).catch((error) => {
+        throw new Error(`Error finding the todo : ${error}`);
+      });
+
+      if (!todo) {
+        throw new Error("Todo does not exist");
+      }
+
+      const todoDeleted = await Todo.destroy({
+        where: {
+          id,
+        },
+      }).then((todo) => {
+        return todo;
+      }).catch((error) => {
+        throw new Error(`Error deleting the todo : ${error}`);
+      });
+
+      if (!todoDeleted) {
+        throw new Error("Error deleting the todo");
+      }
+
+      res.status(200).json(CustomResponse.success(null, "Todo deleted", 204));
+    } catch (error) {
+      console.log("🚀 ~ file: todo.controller.ts:166 ~ TodoController ~ deleteTodo ~ error:", error)
+      if (error instanceof Error) {
+        if (error.message.includes("Error deleting the todo")) {
+          res.status(404).json(CustomResponse.error(error, 500, error.message));
+        } else if (error.message === "Todo does not exist") {
+          res.status(404).json(CustomResponse.error(error, 404, error.message));
+        } else if (error.message.includes("Error finding the todo")) {
+          res.status(404).json(CustomResponse.error(error, 500, error.message));
+        } else {
+          res.status(500).json(CustomResponse.error(error));
+        }
+      }
+    }
+  }
+
+  static async completeTodo (req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params as { id: string };
+
+      const todo = await Todo.findByPk(id).then((todo) => {
+        return todo;
+      }).catch((error) => {
+        throw new Error(`Error finding the todo : ${error}`);
+      });
+
+      if (!todo) {
+        throw new Error("Todo does not exist");
+      }
+
+      const todoCompleted = await Todo.update({
+        completed: true,
+      }, {
+        where: {
+          id,
+        },
+      }).then((todo) => {
+        return todo;
+      }).catch((error) => {
+        throw new Error(`Error completing the todo : ${error}`);
+      });
+
+      if (!todoCompleted) {
+        throw new Error("Error completing the todo");
+      }
+
+      res.status(200).json(CustomResponse.success(safeTodo(todo), "Todo completed"));
+    } catch (error) {
+      console.log("🚀 ~ file: todo.controller.ts:165 ~ TodoController ~ completeTodo ~ error:", error)
+      if (error instanceof Error) {
+        if (error.message.includes("Error completing the todo")) {
+          res.status(409).json(CustomResponse.error(error, 500, error.message));
+        } else if (error.message === "Todo does not exist") {
+          res.status(404).json(CustomResponse.error(error, 404, error.message));
+        } else if (error.message.includes("Error finding the todo")) {
+          res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
           res.status(500).json(CustomResponse.error(error));
         }

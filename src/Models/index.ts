@@ -10,7 +10,13 @@ if (process.env.NODE_ENV !== 'production') {
     config.docker.db_password,
     {
       host: 'localhost',
-      dialect: 'postgres'
+      dialect: 'postgres',
+      dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        }
+      }
     }
   );
 } else {

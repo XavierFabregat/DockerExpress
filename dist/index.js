@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const Models_1 = __importDefault(require("./Models"));
 const Routers_1 = __importDefault(require("./Routers"));
 const PORT = process.env.PORT || 8080;
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || '0.0.0.0';
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(Routers_1.default);

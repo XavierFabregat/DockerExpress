@@ -6,7 +6,7 @@ import sequlize from "./Models";
 import router from "./Routers";
 
 const PORT = process.env.PORT || 8080;
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || '0.0.0.0';
 
 const app = Express();
 app.use(Express.json());

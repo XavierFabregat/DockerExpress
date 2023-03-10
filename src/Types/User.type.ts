@@ -1,4 +1,4 @@
-import { Todo } from "./Todo.type";
+import { SafeTodo } from "./Todo.type";
 
 export interface SafeUser {
   id: string;
@@ -6,5 +6,5 @@ export interface SafeUser {
   avatarUrl?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  todos?: Array<Todo>;
+  todos?: Array<SafeTodo>;
 }

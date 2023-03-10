@@ -1,6 +1,6 @@
 import { SafeUser } from './User.type';
 
-export interface Todo {
+export interface SafeTodo {
   id: string;
   title: string;
   description: string;

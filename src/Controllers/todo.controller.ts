@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import Todo from "../Models/Todos.model";
 import User from "../Models/User.model";
 import { v4 as uuidv4 } from "uuid";
+import { safeTodo, safeTodos } from "../Lib/safeTodo";
 
 class TodoController {
   static async getTodos(req: Request, res: Response): Promise<void> {
@@ -19,7 +20,7 @@ class TodoController {
         throw new Error("No todos found");
       }
 
-      res.status(200).json(CustomResponse.success(todos));
+      res.status(200).json(CustomResponse.success(safeTodos(todos)));
     } catch (error) {
       console.log("🚀 ~ file: todo.controller.ts:24 ~ TodoController ~ getTodos ~ error:", error)
       if (error instanceof Error) {
@@ -65,14 +66,21 @@ class TodoController {
         completed: false,
         userId,
       }).then(async (todo) => {
-        return await Todo.findByPk(id,{
+
+        const todoCreated = await Todo.findByPk(todo.id,{
           include: [{model: User, as: "user"}],
         });
+
+        if (!todoCreated) {
+          throw new Error("Error creating the todo");
+        }
+        return todoCreated;
+
       }).catch((error) => {
         throw new Error(`Error creating the todo : ${error}`);
       });
 
-      res.status(200).json(CustomResponse.success(todo));
+      res.status(200).json(CustomResponse.success(safeTodo(todo)));
     } catch (error) {
       console.log("🚀 ~ file: todo.controller.ts:60 ~ TodoController ~ error:", error)
       if (error instanceof Error) {
@@ -84,6 +92,37 @@ class TodoController {
           res.status(400).json(CustomResponse.error(error, 400, error.message));
         } else if (error.message.includes("Error finding the user")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
+        } else {
+          res.status(500).json(CustomResponse.error(error));
+        }
+      }
+    }
+  }
+
+  static async getTodo (req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params as { id: string };
+
+      const todo = await Todo.findByPk(id, {
+        include: [{model: User, as: "user"}],
+      }).then((todo) => {
+        return todo;
+      }).catch((error) => {
+        throw new Error(`Error finding the todo : ${error}`);
+      });
+
+      if (!todo) {
+        throw new Error("Todo does not exist");
+      }
+
+      res.status(200).json(CustomResponse.success(safeTodo(todo)));
+    } catch (error) {
+      console.log("🚀 ~ file: todo.controller.ts:106 ~ TodoController ~ getTodo ~ error:", error)
+      if (error instanceof Error) {
+        if (error.message.includes("Error finding the todo")) {
+          res.status(404).json(CustomResponse.error(error, 500, error.message));
+        } else if (error.message === "Todo does not exist") {
+          res.status(404).json(CustomResponse.error(error, 404, error.message));
         } else {
           res.status(500).json(CustomResponse.error(error));
         }

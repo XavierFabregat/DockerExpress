@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Models_1 = __importDefault(require("./Models"));
 const Routers_1 = __importDefault(require("./Routers"));
-const PORT = Number(process.env.PORT) || 8080;
+const PORT = process.env.PORT || 8080;
 const HOST = process.env.HOST || 'localhost';
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -19,7 +19,7 @@ console.log('Press Ctrl+C to quit.');
         console.log('Connection has been established successfully.');
         await Models_1.default.sync({ force: true });
         console.log("All models were synchronized successfully.");
-        app.listen(PORT, HOST, () => {
+        app.listen(Number(PORT), HOST, () => {
             console.log(`Running on http://${HOST}:${PORT}`);
         });
     }

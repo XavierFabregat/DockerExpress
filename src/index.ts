@@ -5,7 +5,7 @@ import sequlize from "./Models";
 
 import router from "./Routers";
 
-const PORT = Number(process.env.PORT) || 8080;
+const PORT = process.env.PORT || 8080;
 const HOST = process.env.HOST || 'localhost';
 
 const app = Express();
@@ -23,7 +23,7 @@ console.log('Press Ctrl+C to quit.');
     console.log('Connection has been established successfully.');
     await sequlize.sync({ force: true });
     console.log("All models were synchronized successfully.");
-    app.listen(PORT, HOST, () => {
+    app.listen(Number(PORT), HOST, () => {
       console.log(`Running on http://${HOST}:${PORT}`);
     });
   } catch (error) {

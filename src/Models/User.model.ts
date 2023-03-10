@@ -1,9 +1,26 @@
 import sequlize from ".";
-import { DataTypes } from "sequelize";
-import Todo from "./Todos.model";
+import { BuildOptions, DataTypes, Model } from "sequelize";
+import Todo, { TodoAttributes } from "./Todos.model";
+
+export interface UserAttributes {
+  id: string;
+  username: string;
+  password: string;
+  avatarUrl?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  todos?: Array<TodoAttributes>;
+}
+
+export interface UserModel extends Model<UserAttributes>, UserAttributes {}
+export class UserClass extends Model<UserModel, UserAttributes> {}
+
+export type UserStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): UserModel;
+}
 
 
-const User = sequlize.define('User', {
+const User = <UserStatic>sequlize.define('User', {
   id : {
     type: DataTypes.UUID,
     allowNull: false,

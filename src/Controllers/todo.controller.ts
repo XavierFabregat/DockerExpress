@@ -62,6 +62,7 @@ class TodoController {
         id,
         title,
         description,
+        completed: false,
         userId,
       }).then(async (todo) => {
         return await Todo.findByPk(id,{

@@ -234,7 +234,7 @@
           <li><span class="http-method">POST:</span><code>/api/todos</code></li>
         </ul>
       </sectioin>
-      <p>You can test them by appending the route on the url in the browser (will only work for GET requests), or with the widget below.</p>
+      <p>You can test them by appending the route on the URL in the browser (will only work for GET requests), or with the widget below.</p>
       <form class="endpoint-test">
         <label for="http-method">HTTP Method:</label>
         <select name="http-method" id="http-method" required>
@@ -354,13 +354,13 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const url = `http://localhost:{{PORT}}${endpoint.value}`;
+      const URL = `${endpoint.value}`;
       const method = httpMethod.value;
       const idValue = id.value;
       if (method === 'GET') {
         if (endpoint.value === '/api/users/:id') {
-          console.log(`${url.slice(0,url.length-3)}${idValue}`)
-          fetch(`${url.slice(0,url.length-3)}${idValue}`)
+          console.log(`${URL.slice(0,URL.length-3)}${idValue}`)
+          fetch(`${URL.slice(0,URL.length-3)}${idValue}`)
           .then(res => res.json())
           .then(data => {
             responseBox.textContent = JSON.stringify(data, null, 2);
@@ -368,7 +368,7 @@
           })
           .catch(err => console.log(err));
         } else {
-          fetch(url)
+          fetch(URL)
           .then(res => res.json())
           .then(data => {
             responseBox.textContent = JSON.stringify(data, null, 2);
@@ -378,7 +378,7 @@
         }
       } else if (method === 'POST') {
         if (endpoint.value === '/api/user') {
-          fetch(url, {
+          fetch(URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -395,7 +395,7 @@
            })
           .catch(err => console.log(err));
         } else if (endpoint.value === '/api/todos') {
-          fetch(url, {
+          fetch(URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

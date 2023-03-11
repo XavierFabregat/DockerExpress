@@ -8,7 +8,7 @@ const apiRouter_1 = __importDefault(require("./apiRouter"));
 const views_controller_1 = require("../Controllers/views.controller");
 const router = (0, express_1.Router)();
 router.get('/', views_controller_1.ViewsController.renderIndex);
-router.use('/api', apiRouter_1.default);
+router.use('/api/v1', apiRouter_1.default);
 router.use('*', (req, res) => {
     res.status(404).json({ message: "Not found" });
 });

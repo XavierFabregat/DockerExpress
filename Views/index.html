@@ -227,11 +227,11 @@
       <sectioin class="features">
         <p>So far the routes implemented are:</p>
         <ul>
-          <li><span class="http-method">GET:</span><code>/api/users</code></li>
-          <li><span class="http-method">POST:</span><code>/api/users</code></li>
-          <li><span class="http-method">GET:</span><code>/api/users/:id</code></li>
-          <li><span class="http-method">GET:</span><code>/api/todos</code></li>
-          <li><span class="http-method">POST:</span><code>/api/todos</code></li>
+          <li><span class="http-method">GET:</span><code>/api/v1/users</code></li>
+          <li><span class="http-method">POST:</span><code>/api/v1/users</code></li>
+          <li><span class="http-method">GET:</span><code>/api/v1/users/:id</code></li>
+          <li><span class="http-method">GET:</span><code>/api/v1/todos</code></li>
+          <li><span class="http-method">POST:</span><code>/api/v1/todos</code></li>
         </ul>
       </sectioin>
       <p>You can test them by appending the route on the URL in the browser (will only work for GET requests), or with the widget below.</p>
@@ -245,9 +245,9 @@
         <label for="endpoint">Endpoint:</label>
         <select name="endpoint" id="endpoint">
           <option value="" disabled selected>Choose an endpoint</option>
-          <option value="/api/users">/api/users</option>
-          <option value="/api/users/:id">/api/users/:id</option>
-          <option value="/api/todos">/api/todos</option>
+          <option value="/api/v1/users">/api/v1/users</option>
+          <option value="/api/v1/users/:id">/api/v1/users/:id</option>
+          <option value="/api/v1/todos">/api/v1/todos</option>
         </select>
         <div class="user-id-input hidden">
           <label for="User Id">User Id: </label>
@@ -300,24 +300,24 @@
     form.addEventListener('change', (e) => {
       if (httpMethod.value === "POST") {
         Array.from(endpoint.options).forEach((option, index)=> {
-          if (option.value === '/api/users/:id') {
+          if (option.value === '/api/v1/users/:id') {
             endpoint.remove(index);
           }
         })
       } else if (httpMethod.value === "GET") {
         let add = true;
         for (let i = 0; i < endpoint.options.length; i++) {
-          if (endpoint.options[i].value === '/api/users/:id') {
+          if (endpoint.options[i].value === '/api/v1/users/:id') {
             add = false;
             break;
           }
         }
-        if (add) endpoint.add(new Option('/api/users/:id', '/api/users/:id'), null);
+        if (add) endpoint.add(new Option('/api/v1/users/:id', '/api/v1/users/:id'), null);
       }
     })
 
     form.addEventListener('change', (e) => {
-      if (endpoint.value === '/api/users' && httpMethod.value === 'POST') {
+      if (endpoint.value === '/api/v1/users' && httpMethod.value === 'POST') {
         document.querySelector('.post-body-input').classList.remove('hidden');
         username.setAttribute('required', true);
         password.setAttribute('required', true);
@@ -329,7 +329,7 @@
     });
 
     form.addEventListener('change', (e) => {
-      if (endpoint.value === '/api/users/:id' && httpMethod.value === 'GET') {
+      if (endpoint.value === '/api/v1/users/:id' && httpMethod.value === 'GET') {
         document.querySelector('.user-id-input').classList.remove('hidden');
         id.setAttribute('required', true);
       } else {
@@ -339,7 +339,7 @@
     });
 
     form.addEventListener('change', (e) => {
-      if (endpoint.value === '/api/todos' && httpMethod.value === 'POST') {
+      if (endpoint.value === '/api/v1/todos' && httpMethod.value === 'POST') {
         document.querySelector('.post-body-todo').classList.remove('hidden');
         title.setAttribute('required', true);
         description.setAttribute('required', true);
@@ -359,7 +359,7 @@
       const idValue = id.value;
       console.log(URL);
       if (method === 'GET') {
-        if (endpoint.value === '/api/users/:id') {
+        if (endpoint.value === '/api/v1/users/:id') {
           console.log(`${URL.slice(0,URL.length-3)}${idValue}`)
           fetch(`${URL.slice(0,URL.length-3)}${idValue}`)
           .then(res => res.json())
@@ -378,7 +378,7 @@
           .catch(err => console.log(err));
         }
       } else if (method === 'POST') {
-        if (endpoint.value === '/api/users') {
+        if (endpoint.value === '/api/v1/users') {
           console.log('hi')
           fetch(URL, {
             method: 'POST',
@@ -398,7 +398,7 @@
             copyButton.removeAttribute('disabled');
            })
           .catch(err => console.log(err));
-        } else if (endpoint.value === '/api/todos') {
+        } else if (endpoint.value === '/api/v1/todos') {
           fetch(URL, {
             method: 'POST',
             headers: {

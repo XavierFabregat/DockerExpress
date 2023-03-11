@@ -1,18 +1,21 @@
 import { Sequelize } from 'sequelize';
 import config from '../config';
 
+const { NODE_ENV, LOCAL, DATABASE_URL } = process.env;
 
 
 
-const sequelize = process.env.LOCAL 
-  ? new Sequelize(config.development.connectionString, {
+
+const sequelize = LOCAL 
+  ? new Sequelize(NODE_ENV === 'TEST' ? config.test.connectionString : config.development.connectionString, {
     dialectOptions: {
       host: 'localhost',
       port: 5432,
       dialect: 'postgres',
-    }
+    },
+    logging: false
   })
-  : new Sequelize(process.env.DATABASE_URL || config.development.connectionString ,{
+  : new Sequelize( DATABASE_URL || config.development.connectionString ,{
     dialectOptions: {
       ssl: {
         require: true,

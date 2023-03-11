@@ -1,17 +1,12 @@
 'use strict';
 
-import Express from "express";
 import sequelize from "./Models";
 
-import router from "./Routers";
+import app from "./app";
 
 const PORT = process.env.PORT || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 
-const app = Express();
-app.use(Express.json());
-
-app.use(router)
 
 console.log(`Hello from Node.js ${process.version}!`);
 console.log('Press Ctrl+C to quit.');

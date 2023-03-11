@@ -32,7 +32,9 @@ const config = {
         db_name: process.env.DEV_POSTGRES_DB,
         connectionString: process.env.DEV_DATABASE_URL,
     },
-    test: {},
+    test: {
+        connectionString: process.env.TEST_DATABASE_URL,
+    },
     docker: {
         db_username: process.env.POSTGRES_USER,
         db_password: process.env.POSTGRES_PASSWORD,

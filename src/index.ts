@@ -1,7 +1,7 @@
 'use strict';
 
 import Express from "express";
-import sequlize from "./Models";
+import sequelize from "./Models";
 
 import router from "./Routers";
 
@@ -19,9 +19,9 @@ console.log('Press Ctrl+C to quit.');
 
 (async () => {
   try {
-    await sequlize.authenticate();
+    await sequelize.authenticate();
     console.log('Connection has been established successfully.');
-    await sequlize.sync({ force: true });
+    await sequelize.sync({ force: true });
     console.log("All models were synchronized successfully.");
     app.listen(Number(PORT), HOST, () => {
       console.log(`Running on http://${HOST}:${PORT}`);

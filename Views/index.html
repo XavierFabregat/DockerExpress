@@ -321,12 +321,10 @@
         document.querySelector('.post-body-input').classList.remove('hidden');
         username.setAttribute('required', true);
         password.setAttribute('required', true);
-        userId.setAttribute('required', true);
       } else {
         document.querySelector('.post-body-input').classList.add('hidden');
         username.removeAttribute('required');
         password.removeAttribute('required');
-        userId.removeAttribute('required');
       }
     });
 
@@ -345,10 +343,12 @@
         document.querySelector('.post-body-todo').classList.remove('hidden');
         title.setAttribute('required', true);
         description.setAttribute('required', true);
+        userId.setAttribute('required', true);
       } else {
         document.querySelector('.post-body-todo').classList.add('hidden');
         title.removeAttribute('required');
         description.removeAttribute('required');
+        userId.removeAttribute('required');
       }
     });
 
@@ -357,6 +357,7 @@
       const URL = `${endpoint.value}`;
       const method = httpMethod.value;
       const idValue = id.value;
+      console.log(URL);
       if (method === 'GET') {
         if (endpoint.value === '/api/users/:id') {
           console.log(`${URL.slice(0,URL.length-3)}${idValue}`)
@@ -377,7 +378,8 @@
           .catch(err => console.log(err));
         }
       } else if (method === 'POST') {
-        if (endpoint.value === '/api/user') {
+        if (endpoint.value === '/api/users') {
+          console.log('hi')
           fetch(URL, {
             method: 'POST',
             headers: {
@@ -385,11 +387,13 @@
             },
             body: JSON.stringify({
               username: username.value,
-              password: password.value
+              password: password.value,
+              repeatPassword: password.value,
             })
           })
           .then(res => res.json())
           .then(data => {
+            console.log(data)
             responseBox.textContent = JSON.stringify(data, null, 2);
             copyButton.removeAttribute('disabled');
            })

@@ -22,7 +22,7 @@ class UserController {
         if (error.message === "No users found") {
          res
           .status(404)
-          .json(CustomResponse.error(error, 404));
+          .json(CustomResponse.error(error, 404, error.message));
         } else {
           res
             .status(500)

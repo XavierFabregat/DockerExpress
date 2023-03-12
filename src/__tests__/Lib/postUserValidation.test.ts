@@ -118,13 +118,13 @@ describe('validateUpdatePasswords', () => {
   it('should return false if password is not provided', () => {
     const res = validateUpdatePasswords('', 'password!')
     expect(res.valid).toBe(false);
-    expect(res.message).toBe('Password/s invalid.');
+    expect(res.message).toBe('Password and repeat password are required');
   });
 
   it('should return false if repeat password is not provided', () => {
     const res = validateUpdatePasswords('password!', '')
     expect(res.valid).toBe(false);
-    expect(res.message).toBe('Password/s invalid.');
+    expect(res.message).toBe('Password and repeat password are required');
   });
 
   it('should return false if passwords do not match', () => {

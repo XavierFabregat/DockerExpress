@@ -93,8 +93,7 @@ export const todos = [
 
 export default async function seedTodos() {
   try {
-    const createdTodos = await Todo.bulkCreate(todos);
-    console.log(createdTodos);
+    await Todo.bulkCreate(todos);
   } catch (error) {
     console.log("🚀 ~ file: Todos.seed.ts:86 ~ seedTodos ~ error:", error)
   }

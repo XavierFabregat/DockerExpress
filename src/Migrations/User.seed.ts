@@ -31,7 +31,7 @@ export const users = [
 
 export default async function seedUsers() {
   try {
-    const createdUsers = await User.bulkCreate(users);
+    await User.bulkCreate(users);
   } catch (error) {
     console.log("🚀 ~ file: User.seed.ts:37 ~ seedUsers ~ error:", error)
   }

@@ -18,11 +18,11 @@ class TodoController {
 
       res.status(200).json(CustomResponse.success(safeTodos(todos)));
     } catch (error) {
-      console.log("🚀 ~ file: todo.controller.ts:24 ~ TodoController ~ getTodos ~ error:", error)
       if (error instanceof Error) {
         if (error.message.includes("Error finding the todos")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
+          console.log("🚀 ~ file: todo.controller.ts:24 ~ TodoController ~ getTodos ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
         }
       }
@@ -66,7 +66,7 @@ class TodoController {
         });
 
         if (!todoCreated) {
-          throw new Error("Error creating the todo");
+          throw new Error("Error finding the todo after its creation");
         }
         return todoCreated;
 
@@ -76,7 +76,6 @@ class TodoController {
 
       res.status(200).json(CustomResponse.success(safeTodo(todo)));
     } catch (error) {
-      console.log("🚀 ~ file: todo.controller.ts:60 ~ TodoController ~ error:", error)
       if (error instanceof Error) {
         if (error.message.includes("Error creating the todo")) {
           res.status(409).json(CustomResponse.error(error, 500, error.message));
@@ -87,6 +86,7 @@ class TodoController {
         } else if (error.message.includes("Error finding the user")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
+          console.log("🚀 ~ file: todo.controller.ts:60 ~ TodoController ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
         }
       }
@@ -111,13 +111,13 @@ class TodoController {
 
       res.status(200).json(CustomResponse.success(safeTodo(todo)));
     } catch (error) {
-      console.log("🚀 ~ file: todo.controller.ts:106 ~ TodoController ~ getTodo ~ error:", error)
       if (error instanceof Error) {
         if (error.message.includes("Error finding the todo")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else if (error.message === "Todo does not exist") {
           res.status(404).json(CustomResponse.error(error, 404, error.message));
         } else {
+          console.log("🚀 ~ file: todo.controller.ts:106 ~ TodoController ~ getTodo ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
         }
       }
@@ -168,7 +168,6 @@ class TodoController {
 
       res.status(200).json(CustomResponse.success(safeTodo(todoUpdated), "Todo updated"));
     } catch (error) {
-      console.log("🚀 ~ file: todo.controller.ts:161 ~ TodoController ~ updateTodo ~ error:", error)
       if (error instanceof Error) {
         if (error.message.includes("Error updating the todo")) {
           res.status(409).json(CustomResponse.error(error, 500, error.message));
@@ -177,6 +176,7 @@ class TodoController {
         } else if (error.message === "Todo does not exist") {
           res.status(404).json(CustomResponse.error(error, 404, error.message));
         } else {
+          console.log("🚀 ~ file: todo.controller.ts:161 ~ TodoController ~ updateTodo ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
         }
       }
@@ -213,7 +213,6 @@ class TodoController {
 
       res.status(200).json(CustomResponse.success(null, "Todo deleted", 204));
     } catch (error) {
-      console.log("🚀 ~ file: todo.controller.ts:166 ~ TodoController ~ deleteTodo ~ error:", error)
       if (error instanceof Error) {
         if (error.message.includes("Error deleting the todo")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
@@ -222,6 +221,7 @@ class TodoController {
         } else if (error.message.includes("Error finding the todo")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
+          console.log("🚀 ~ file: todo.controller.ts:166 ~ TodoController ~ deleteTodo ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
         }
       }
@@ -260,7 +260,6 @@ class TodoController {
 
       res.status(200).json(CustomResponse.success(safeTodo(todo), "Todo completed"));
     } catch (error) {
-      console.log("🚀 ~ file: todo.controller.ts:165 ~ TodoController ~ completeTodo ~ error:", error)
       if (error instanceof Error) {
         if (error.message.includes("Error completing the todo")) {
           res.status(409).json(CustomResponse.error(error, 500, error.message));
@@ -269,6 +268,7 @@ class TodoController {
         } else if (error.message.includes("Error finding the todo")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
+          console.log("🚀 ~ file: todo.controller.ts:165 ~ TodoController ~ completeTodo ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
         }
       }

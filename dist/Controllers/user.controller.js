@@ -247,7 +247,7 @@ class UserController {
             }).then((user) => {
                 return user;
             }).catch((error) => {
-                throw new Error(`Error finding the user : ${error}`);
+                throw new Error(`Error while the user : ${error}`);
             });
             if (!user) {
                 throw new Error("User not found");
@@ -257,7 +257,7 @@ class UserController {
                     id,
                 },
             }).then(() => {
-                res.status(200).json(Response_1.CustomResponse.success(null, "User deleted successfully", 204));
+                res.status(200).json(Response_1.CustomResponse.success(null, "User deleted successfully", 200));
             }).catch((error) => {
                 throw new Error(`Error deleting the user : ${error}`);
             });
@@ -270,6 +270,7 @@ class UserController {
                         .json(Response_1.CustomResponse.error(error, 404));
                 }
                 else {
+                    console.log("🚀 ~ file: user.controller.ts:300 ~ UserController ~ deleteUser ~ error:", error);
                     res
                         .status(500)
                         .json(Response_1.CustomResponse.error(error));

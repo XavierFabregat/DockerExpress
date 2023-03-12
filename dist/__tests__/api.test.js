@@ -346,6 +346,43 @@ describe('User Controller', () => {
             });
         });
     });
+    describe('DELETE /api/v1/users/:id', () => {
+        it('should return 404 if user is not found', async () => {
+            const res = await (0, supertest_1.default)(app_1.default).delete(`/api/v1/users/${(0, uuid_1.v4)()}`);
+            expect(res.status).toBe(404);
+            expect(res.body.status).toBe(404);
+            expect(res.body.data).toBe(null);
+            expect(res.body.error).toStrictEqual({});
+            expect(res.body.message).toBe("User not found");
+        });
+        it('should return 200 and success response if user is deleted', async () => {
+            const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                username: 'testUser',
+                password: 'test-test',
+                repeatPassword: 'test-test',
+            });
+            const res = await (0, supertest_1.default)(app_1.default).delete(`/api/v1/users/${user.body.data.id}`);
+            expect(res.status).toBe(200);
+            expect(res.body.data).toBe(null);
+            expect(res.body.status).toBe(200);
+            expect(res.body.error).toBe(false);
+            expect(res.body.message).toBe('User deleted successfully');
+        });
+        it('should delete the user', async () => {
+            const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                username: 'testUser',
+                password: 'test-test',
+                repeatPassword: 'test-test',
+            });
+            await (0, supertest_1.default)(app_1.default).delete(`/api/v1/users/${user.body.data.id}`);
+            const res = await (0, supertest_1.default)(app_1.default).get(`/api/v1/users/${user.body.data.id}`);
+            expect(res.status).toBe(404);
+            expect(res.body.status).toBe(404);
+            expect(res.body.data).toBe(null);
+            expect(res.body.error).toStrictEqual({});
+            expect(res.body.message).toBe("User not found");
+        });
+    });
 });
 describe('Todo Controllers', () => {
     it('should pass this test', () => {

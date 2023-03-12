@@ -381,6 +381,48 @@ describe('User Controller', () => {
     });
   });
 
+  describe('DELETE /api/v1/users/:id', () => {
+    it('should return 404 if user is not found', async () => {
+      const res = await request(app).delete(`/api/v1/users/${uuidv4()}`);
+      expect(res.status).toBe(404);
+      expect(res.body.status).toBe(404);
+      expect(res.body.data).toBe(null);
+      expect(res.body.error).toStrictEqual({});
+      expect(res.body.message).toBe("User not found");
+    });
+
+    it('should return 200 and success response if user is deleted', async () => {
+      const user = await request(app).post('/api/v1/users').send({
+        username: 'testUser',
+        password: 'test-test',
+        repeatPassword: 'test-test',
+      });
+      const res = await request(app).delete(`/api/v1/users/${user.body.data.id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toBe(null);
+      expect(res.body.status).toBe(200);
+      expect(res.body.error).toBe(false);
+      expect(res.body.message).toBe('User deleted successfully');
+    });
+
+    it('should delete the user', async () => {
+      const user = await request(app).post('/api/v1/users').send({
+        username: 'testUser',
+        password: 'test-test',
+        repeatPassword: 'test-test',
+      });
+      await request(app).delete(`/api/v1/users/${user.body.data.id}`);
+      const res = await request(app).get(`/api/v1/users/${user.body.data.id}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body.status).toBe(404);
+      expect(res.body.data).toBe(null);
+      expect(res.body.error).toStrictEqual({});
+      expect(res.body.message).toBe("User not found");
+    });
+  });
+
 });
 
 describe('Todo Controllers', () => {

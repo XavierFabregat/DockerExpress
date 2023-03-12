@@ -129,6 +129,10 @@ class TodoController {
       const { id } = req.params as { id: string };
       const { title, description, completed } = req.body as { title: string, description: string, completed: boolean };
 
+      if (!title && !description && !completed) {
+        throw new Error("Either a title, description or completed is required");
+      }
+
       const todo = await Todo.findByPk(id).then((todo) => {
         return todo;
       }).catch((error) => {
@@ -147,7 +151,7 @@ class TodoController {
         where: {
           id,
         },
-      }).then(async (todo) => {
+      }).then(async () => {
 
         const todoUpdated = await Todo.findByPk(id, {
           include: [{model: User, as: "user"}],
@@ -162,19 +166,13 @@ class TodoController {
         throw new Error(`Error updating the todo : ${error}`);
       });
 
-      if (!todoUpdated) {
-        throw new Error("Error updating the todo");
-      }
-
-      res.status(200).json(CustomResponse.success(safeTodo(todoUpdated), "Todo updated"));
+      res.status(200).json(CustomResponse.success(safeTodo(todoUpdated), "Todo updated successfully"));
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes("Error updating the todo")) {
-          res.status(409).json(CustomResponse.error(error, 500, error.message));
-        } else if (error.message.includes("Error finding the todo")) {
-          res.status(404).json(CustomResponse.error(error, 500, error.message));
-        } else if (error.message === "Todo does not exist") {
+        if (error.message === "Todo does not exist") {
           res.status(404).json(CustomResponse.error(error, 404, error.message));
+        } else if (error.message === 'Either a title, description or completed is required') {
+          res.status(403).json(CustomResponse.error(error, 403, error.message));
         } else {
           console.log("🚀 ~ file: todo.controller.ts:161 ~ TodoController ~ updateTodo ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
@@ -211,15 +209,13 @@ class TodoController {
         throw new Error("Error deleting the todo");
       }
 
-      res.status(200).json(CustomResponse.success(null, "Todo deleted", 204));
+      res.status(200).json(CustomResponse.success(null, "Todo deleted successfully", 200));
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes("Error deleting the todo")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else if (error.message === "Todo does not exist") {
           res.status(404).json(CustomResponse.error(error, 404, error.message));
-        } else if (error.message.includes("Error finding the todo")) {
-          res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
           console.log("🚀 ~ file: todo.controller.ts:166 ~ TodoController ~ deleteTodo ~ error:", error)
           res.status(500).json(CustomResponse.error(error));
@@ -249,7 +245,13 @@ class TodoController {
           id,
         },
       }).then((todo) => {
-        return todo;
+        const todoCompleted = Todo.findByPk(id, {
+          include: [{model: User, as: "user"}],
+        });
+        if (!todoCompleted) {
+          throw new Error('Error finding the todo after update')
+        }
+        return todoCompleted;
       }).catch((error) => {
         throw new Error(`Error completing the todo : ${error}`);
       });
@@ -258,15 +260,11 @@ class TodoController {
         throw new Error("Error completing the todo");
       }
 
-      res.status(200).json(CustomResponse.success(safeTodo(todo), "Todo completed"));
+      res.status(200).json(CustomResponse.success(safeTodo(todoCompleted), "Todo completed successfully"));
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes("Error completing the todo")) {
-          res.status(409).json(CustomResponse.error(error, 500, error.message));
-        } else if (error.message === "Todo does not exist") {
+        if (error.message === "Todo does not exist") {
           res.status(404).json(CustomResponse.error(error, 404, error.message));
-        } else if (error.message.includes("Error finding the todo")) {
-          res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
           console.log("🚀 ~ file: todo.controller.ts:165 ~ TodoController ~ completeTodo ~ error:", error)
           res.status(500).json(CustomResponse.error(error));

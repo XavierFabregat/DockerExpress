@@ -24,5 +24,6 @@ module.exports = {
     "/src/config/",
     "/src/Models/",
     "/src/Routers/"
-  ]
+  ],
+  silent: true,
 }

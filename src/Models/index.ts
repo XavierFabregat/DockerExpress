@@ -3,11 +3,8 @@ import config from '../config';
 
 const { NODE_ENV, LOCAL, DATABASE_URL } = process.env;
 
-
-
-
 const sequelize = LOCAL 
-  ? new Sequelize(NODE_ENV === 'TEST' ? config.test.connectionString : config.development.connectionString, {
+  ? new Sequelize(NODE_ENV === 'test' ? config.test.connectionString : config.development.connectionString, {
     dialectOptions: {
       host: 'localhost',
       port: 5432,

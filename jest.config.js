@@ -16,4 +16,13 @@ module.exports = {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
   detectOpenHandles: true,
+
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "/dist/",
+    "/src/__tests__/",
+    "/src/config/",
+    "/src/Models/",
+    "/src/Routers/"
+  ]
 }

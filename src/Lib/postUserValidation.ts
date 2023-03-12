@@ -30,10 +30,10 @@ export function validateUsername (username: string) {
 
 
 export function validateUpdatePasswords (password: string, repeatPassword: string) {
-  if (!validatePassword(password).valid || !validatePassword(repeatPassword).valid) {
-    return { valid: false, message: "Password/s invalid." };
-  } else if (!password || !repeatPassword) {
+  if (!password || !repeatPassword) { 
     return { valid: false, message: "Password and repeat password are required" };
+  } else if (!validatePassword(password).valid || !validatePassword(repeatPassword).valid) {
+    return { valid: false, message: "Password/s invalid." };
   } else if (password !== repeatPassword) {
     return { valid: false, message: "Passwords do not match" };
   } else {

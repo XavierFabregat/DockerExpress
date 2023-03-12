@@ -156,7 +156,6 @@ describe('User Controller', () => {
     describe('GET /api/v1/users/:id', () => {
         it('should return 404 if user is not found', async () => {
             const res = await (0, supertest_1.default)(app_1.default).get(`/api/v1/users/${(0, uuid_1.v4)()}`);
-            console.log(res.body);
             expect(res.status).toBe(404);
             expect(res.body.status).toBe(404);
             expect(res.body.data).toBe(null);
@@ -191,5 +190,165 @@ describe('User Controller', () => {
                 todos: user.body.data.todos,
             });
         });
+    });
+    describe('PATCH /api/v1/users/:id/:updatedValue', () => {
+        describe('Update username', () => {
+            it('should return 404 if user is not found', async () => {
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${(0, uuid_1.v4)()}/username`);
+                expect(res.status).toBe(404);
+                expect(res.body.status).toBe(404);
+                expect(res.body.data).toBe(null);
+                expect(res.body.error).toStrictEqual({});
+                expect(res.body.message).toBe("User not found");
+            });
+            it('should return 409 and error response if username is already taken', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser2',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/username`).send({
+                    newUsername: 'testUser2',
+                });
+                expect(res.status).toBe(409);
+                expect(res.body.status).toBe(409);
+                expect(res.body.data).toBe(null);
+                expect(res.body.error).toStrictEqual({});
+                expect(res.body.message).toBe("Username already taken");
+            });
+            it('should return 403 and error response if newUsername is not provided', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/username`).send({});
+                expect(res.status).toBe(403);
+                expect(res.body.status).toBe(403);
+                expect(res.body.data).toBe(null);
+                expect(res.body.error).toStrictEqual({});
+                expect(res.body.message).toBe('New username required');
+            });
+            it('should return 400 and error response if username is invalid', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/username`).send({
+                    newUsername: 'fail'
+                });
+                expect(res.status).toBe(403);
+                expect(res.body.status).toBe(403);
+                expect(res.body.data).toBe(null);
+                expect(res.body.error).toStrictEqual({});
+                expect(res.body.message).toBe('Error in input validation : Username must be at least 6 characters');
+            });
+            it('should return 200 and success response if username is updated', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/username`).send({
+                    newUsername: 'success'
+                });
+                expect(res.status).toBe(200);
+                expect(res.body.data).toStrictEqual({
+                    id: user.body.data.id,
+                    username: 'success',
+                    avatarUrl: user.body.data.avatarUrl,
+                    createdAt: user.body.data.createdAt,
+                    updatedAt: res.body.data.updatedAt,
+                    todos: user.body.data.todos,
+                });
+                expect(res.body.status).toBe(200);
+                expect(res.body.error).toBe(false);
+                expect(res.body.message).toBe('User updated successfully');
+            });
+            it('should change the updatedAt field', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/username`).send({
+                    newUsername: 'success'
+                });
+                expect(res.body.data.updatedAt).not.toBe(user.body.data.updatedAt);
+            });
+        });
+        describe('Update password', () => {
+            it('should return 404 if user is not found', async () => {
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${(0, uuid_1.v4)()}/password`);
+                expect(res.status).toBe(404);
+                expect(res.body.status).toBe(404);
+                expect(res.body.data).toBe(null);
+                expect(res.body.error).toStrictEqual({});
+                expect(res.body.message).toBe("User not found");
+            });
+            it('should return 400 and error response if password is not provided', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/password`).send({});
+                expect(res.status).toBe(400);
+                expect(res.body.status).toBe(400);
+                expect(res.body.data).toBe(null);
+                expect(res.body.error).toStrictEqual({});
+                expect(res.body.message).toBe('Password and repeat password are required');
+            });
+            it('should return 403 and error response if password is invalid', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/password`).send({
+                    password: 'fail',
+                    repeatPassword: 'fail',
+                });
+                expect(res.status).toBe(403);
+                expect(res.body.status).toBe(403);
+                expect(res.body.data).toBe(null);
+                expect(res.body.error).toStrictEqual({});
+                expect(res.body.message).toBe('Error in input validation : Password/s invalid.');
+            });
+            it('should return 200 and success response if password is updated', async () => {
+                const user = await (0, supertest_1.default)(app_1.default).post('/api/v1/users').send({
+                    username: 'testUser',
+                    password: 'test-test',
+                    repeatPassword: 'test-test',
+                });
+                const res = await (0, supertest_1.default)(app_1.default).patch(`/api/v1/users/${user.body.data.id}/password`).send({
+                    password: 'success-test',
+                    repeatPassword: 'success-test',
+                });
+                expect(res.status).toBe(200);
+                expect(res.body.data).toStrictEqual({
+                    id: user.body.data.id,
+                    username: user.body.data.username,
+                    avatarUrl: user.body.data.avatarUrl,
+                    createdAt: user.body.data.createdAt,
+                    updatedAt: res.body.data.updatedAt,
+                    todos: user.body.data.todos,
+                });
+                expect(res.body.status).toBe(200);
+                expect(res.body.error).toBe(false);
+                expect(res.body.message).toBe('User updated successfully');
+            });
+        });
+    });
+});
+describe('Todo Controllers', () => {
+    it('should pass this test', () => {
+        expect(1).toBe(1);
     });
 });

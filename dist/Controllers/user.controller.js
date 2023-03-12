@@ -137,40 +137,52 @@ class UserController {
     }
     static async updateUser(req, res) {
         try {
-            const { updatedValue } = req.params;
+            const { updatedValue, id } = req.params;
+            const userToUpdate = await User_model_1.default.findByPk(id);
+            if (!userToUpdate) {
+                throw new Error("User not found");
+            }
             if (updatedValue === 'password') {
-                const { username, password, repeatPassword } = req.body;
-                const userToUpdate = await User_model_1.default.findOne({ where: { username } });
-                if (!userToUpdate) {
-                    throw new Error("User not found");
+                const { oldPassword, password, repeatPassword } = req.body;
+                if (!oldPassword) {
+                    // This is for the forgot password functionality!! (needs some fixing, since now with just the username you can change the password)
+                    if (!password || !repeatPassword) {
+                        throw new Error("Password and repeat password are required");
+                    }
+                    const inputValidation = (0, postUserValidation_1.validateUpdatePasswords)(password, repeatPassword);
+                    if (!inputValidation.valid) {
+                        throw new Error(`Error in input validation : ${inputValidation.message}`);
+                    }
+                    const hashedPassword = await bcrypt_1.default.hash(password, 10);
+                    const updatedUser = await User_model_1.default.update({ password: hashedPassword }, { where: { id } }).then(async () => {
+                        const updatedUser = await User_model_1.default.findByPk(id, { include: [{ model: Todos_model_1.default, as: "todos" }] });
+                        if (!updatedUser) {
+                            throw new Error("User not found after update");
+                        }
+                        return updatedUser;
+                    }).catch((error) => {
+                        throw new Error(`Error updating the user : ${error}`);
+                    });
+                    res.status(200).json(Response_1.CustomResponse.success((0, safeUser_1.returnSafeUser)(updatedUser), "User updated successfully", 200));
                 }
-                const inputValidation = (0, postUserValidation_1.postUserValidation)(username, password, repeatPassword);
+                else {
+                    // implement update with old password
+                }
+            }
+            if (updatedValue === 'username') {
+                const { newUsername } = req.body;
+                if (!newUsername) {
+                    throw new Error("New username required");
+                }
+                const inputValidation = (0, postUserValidation_1.validateUsername)(newUsername);
                 if (!inputValidation.valid) {
                     throw new Error(`Error in input validation : ${inputValidation.message}`);
                 }
-                const hashedPassword = await bcrypt_1.default.hash(password, 10);
-                const updatedUser = await User_model_1.default.update({ password: hashedPassword }, { where: { username } }).then(async () => {
-                    const updatedUser = await User_model_1.default.findOne({ where: { username }, include: [{ model: Todos_model_1.default, as: "todos" }] });
-                    if (!updatedUser) {
-                        throw new Error("User not found after update");
-                    }
-                    return updatedUser;
-                }).catch((error) => {
-                    throw new Error(`Error updating the user : ${error}`);
-                });
-                res.status(204).json(Response_1.CustomResponse.success((0, safeUser_1.returnSafeUser)(updatedUser), "User updated successfully", 204));
-            }
-            if (updatedValue === 'username') {
-                const { username, newUsername, id } = req.body;
                 const isUsernameTaken = await User_model_1.default.findOne({ where: { username: newUsername } });
                 if (isUsernameTaken) {
                     throw new Error("Username taken.");
                 }
-                const doesUserExist = await User_model_1.default.findOne({ where: { username, id } });
-                if (!doesUserExist) {
-                    throw new Error("User not found");
-                }
-                const updatedUser = await User_model_1.default.update({ username: newUsername }, { where: { username, id } }).then(async () => {
+                const updatedUser = await User_model_1.default.update({ username: newUsername }, { where: { id } }).then(async () => {
                     const updatedUser = await User_model_1.default.findOne({ where: { username: newUsername }, include: [{ model: Todos_model_1.default, as: "todos" }] });
                     if (!updatedUser) {
                         throw new Error("User not found after update");
@@ -180,8 +192,8 @@ class UserController {
                     throw new Error(`Error updating the user : ${error}`);
                 });
                 res
-                    .status(204)
-                    .json(Response_1.CustomResponse.success((0, safeUser_1.returnSafeUser)(updatedUser), "User updated successfully", 204));
+                    .status(200)
+                    .json(Response_1.CustomResponse.success((0, safeUser_1.returnSafeUser)(updatedUser), "User updated successfully", 200));
             }
         }
         catch (error) {
@@ -190,6 +202,11 @@ class UserController {
                     res
                         .status(404)
                         .json(Response_1.CustomResponse.error(error, 404));
+                }
+                else if (error.message === 'Password and repeat password are required') {
+                    res
+                        .status(400)
+                        .json(Response_1.CustomResponse.error(error, 400, "Password and repeat password are required"));
                 }
                 else if (error.message === "User not found after update") {
                     res
@@ -204,9 +221,15 @@ class UserController {
                 else if (error.message === "Username taken.") {
                     res
                         .status(409)
-                        .json(Response_1.CustomResponse.error(error, 409, "Username taken"));
+                        .json(Response_1.CustomResponse.error(error, 409, "Username already taken"));
+                }
+                else if (error.message === 'New username required') {
+                    res
+                        .status(403)
+                        .json(Response_1.CustomResponse.error(error, 403, "New username required"));
                 }
                 else {
+                    console.log("🚀 ~ file: user.controller.ts:211 ~ UserController ~ updateUser ~ error:", error);
                     res
                         .status(500)
                         .json(Response_1.CustomResponse.error(error));

@@ -11,7 +11,7 @@ const apiRouter = (0, express_1.Router)();
 apiRouter.get("/users", user_controller_1.default.getUsers);
 apiRouter.post("/users", user_controller_1.default.postUser);
 apiRouter.get("/users/:id", user_controller_1.default.getUserById);
-apiRouter.patch("/users/:updatedValue", user_controller_1.default.updateUser);
+apiRouter.patch("/users/:id/:updatedValue", user_controller_1.default.updateUser);
 apiRouter.delete("/users/:id", user_controller_1.default.deleteUser);
 // Todo routes
 apiRouter.get("/todos", todo_controller_1.default.getTodos);

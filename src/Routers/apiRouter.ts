@@ -10,7 +10,7 @@ const apiRouter = Router();
 apiRouter.get("/users", UserController.getUsers);
 apiRouter.post("/users", UserController.postUser);
 apiRouter.get("/users/:id", UserController.getUserById);
-apiRouter.patch("/users/:updatedValue", UserController.updateUser);
+apiRouter.patch("/users/:id/:updatedValue", UserController.updateUser);
 apiRouter.delete("/users/:id", UserController.deleteUser);
 
 

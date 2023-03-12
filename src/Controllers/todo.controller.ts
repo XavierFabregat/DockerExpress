@@ -140,8 +140,8 @@ class TodoController {
       }
 
       const todoUpdated = await Todo.update({
-        title,
-        description,
+        title: title || todo.title,
+        description: description || todo.description,
         completed: completed || false,
       }, {
         where: {

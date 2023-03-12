@@ -16,17 +16,11 @@ class TodoController {
         throw new Error(`Error finding the todos : ${error}`);
       });
 
-      if (todos.length === 0) {
-        throw new Error("No todos found");
-      }
-
       res.status(200).json(CustomResponse.success(safeTodos(todos)));
     } catch (error) {
       console.log("🚀 ~ file: todo.controller.ts:24 ~ TodoController ~ getTodos ~ error:", error)
       if (error instanceof Error) {
-        if (error.message === "No todos found") {
-          res.status(404).json(CustomResponse.error(error, 404, error.message));
-        } else if (error.message.includes("Error finding the todos")) {
+        if (error.message.includes("Error finding the todos")) {
           res.status(404).json(CustomResponse.error(error, 500, error.message));
         } else {
           res.status(500).json(CustomResponse.error(error));

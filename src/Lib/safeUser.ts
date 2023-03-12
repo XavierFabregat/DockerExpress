@@ -9,6 +9,5 @@ export function returnSafeUser(user: UserModel | UserAttributes): SafeUser {
 
 export function returnSafeUsers(users: UserModel[]): SafeUser[] {
   const usersWithoutPassword = users.map(returnSafeUser);
-  console.log(usersWithoutPassword)
   return usersWithoutPassword;
 }

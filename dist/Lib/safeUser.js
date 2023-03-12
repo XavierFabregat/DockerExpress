@@ -9,7 +9,6 @@ function returnSafeUser(user) {
 exports.returnSafeUser = returnSafeUser;
 function returnSafeUsers(users) {
     const usersWithoutPassword = users.map(returnSafeUser);
-    console.log(usersWithoutPassword);
     return usersWithoutPassword;
 }
 exports.returnSafeUsers = returnSafeUsers;

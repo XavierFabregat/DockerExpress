@@ -10,25 +10,25 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 exports.users = [
     {
         id: (0, uuid_1.v4)(),
-        username: "admin",
+        username: "adminTest",
         password: bcrypt_1.default.hashSync("admin", 10),
         avatarUrl: "https://i.imgur.com/4YK1Y0x.png",
     },
     {
         id: (0, uuid_1.v4)(),
-        username: "user",
+        username: "userTest",
         password: bcrypt_1.default.hashSync("user", 10),
         avatarUrl: "https://i.imgur.com/4YK1Y0x.png",
     },
     {
         id: (0, uuid_1.v4)(),
-        username: "guest",
+        username: "guestTest",
         password: bcrypt_1.default.hashSync("guest", 10),
         avatarUrl: "https://i.imgur.com/4YK1Y0x.png",
     },
     {
         id: (0, uuid_1.v4)(),
-        username: "test",
+        username: "testTest",
         password: bcrypt_1.default.hashSync("test", 10),
         avatarUrl: "https://i.imgur.com/4YK1Y0x.png",
     },
@@ -36,7 +36,6 @@ exports.users = [
 async function seedUsers() {
     try {
         const createdUsers = await User_model_1.default.bulkCreate(exports.users);
-        console.log(createdUsers);
     }
     catch (error) {
         console.log("🚀 ~ file: User.seed.ts:37 ~ seedUsers ~ error:", error);

@@ -16,23 +16,13 @@ class UserController {
             const users = await User_model_1.default.findAll({
                 include: [{ model: Todos_model_1.default, as: "todos" }],
             });
-            if (users.length === 0) {
-                throw new Error("No users found");
-            }
             res.status(200).json(Response_1.CustomResponse.success((0, safeUser_1.returnSafeUsers)(users)));
         }
         catch (error) {
             if (error instanceof Error) {
-                if (error.message === "No users found") {
-                    res
-                        .status(404)
-                        .json(Response_1.CustomResponse.error(error, 404, error.message));
-                }
-                else {
-                    res
-                        .status(500)
-                        .json(Response_1.CustomResponse.error(error));
-                }
+                res
+                    .status(500)
+                    .json(Response_1.CustomResponse.error(error));
             }
         }
     }
@@ -87,7 +77,7 @@ class UserController {
                 if (error.message === "Username taken.") {
                     res
                         .status(409)
-                        .json(Response_1.CustomResponse.error(error, 409, "User already exists"));
+                        .json(Response_1.CustomResponse.error(error, 409, "Username already taken"));
                 }
                 else if (error.message === "Username and password are required") {
                     res
@@ -95,6 +85,11 @@ class UserController {
                         .json(Response_1.CustomResponse.error(error, 400, "Username and password are required"));
                 }
                 else if (error.message.includes("Error in input validation")) {
+                    res
+                        .status(403)
+                        .json(Response_1.CustomResponse.error(error, 403, error.message));
+                }
+                else if (error.message === 'Passwords do not match') {
                     res
                         .status(403)
                         .json(Response_1.CustomResponse.error(error, 403, error.message));
@@ -126,7 +121,6 @@ class UserController {
             res.status(200).json(Response_1.CustomResponse.success((0, safeUser_1.returnSafeUser)(user)));
         }
         catch (error) {
-            console.log("🚀 ~ file: user.controller.ts:99 ~ UserController ~ getOneUser ~ error:", error);
             if (error instanceof Error) {
                 if (error.message === "User not found") {
                     res
